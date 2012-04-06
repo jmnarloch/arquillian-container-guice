@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.guice.container;
-
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
+package org.jboss.arquillian.guice;
 
 /**
- * A remote extension that configures the Guice extension.
+ * Defines a set of consts used in this component.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
  */
-public class GuiceEnricherRemoteExtension implements RemoteLoadableExtension {
+public final class GuiceExtensionConsts {
 
     /**
-     * {@inheritDoc}
+     * <p>Creates new instance of {@link GuiceExtensionConsts} class.</p>
+     *
+     * <p>Private constructor prevents from instantiation outside this class.</p>
      */
-    public void register(ExtensionBuilder builder) {
-
-        if (Validate.classExists("com.google.inject.Injector")) {
-
-            builder.service(TestEnricher.class, GuiceInjectionEnricher.class)
-                    .observer(InjectorProducer.class);
-        }
+    public GuiceExtensionConsts() {
+        // empty constructor
     }
 }

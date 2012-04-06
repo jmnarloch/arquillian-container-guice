@@ -23,12 +23,16 @@ import org.jboss.arquillian.guice.container.GuiceInjectionEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
+ * Initializes the Guice extension.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
  */
 public class GuiceEnricherExtension implements LoadableExtension {
 
+    /**
+     * {@inheritDoc}
+     */
     public void register(ExtensionBuilder builder) {
 
         if (Validate.classExists("com.google.inject.Injector")) {

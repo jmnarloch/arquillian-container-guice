@@ -27,6 +27,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import java.io.File;
 
 /**
+ * Guice {@link ProtocolArchiveProcessor} that adds all the required dependencies into test deployment.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
@@ -68,6 +69,11 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
         return archive instanceof WebArchive;
     }
 
+    /**
+     * Adds the required by Guice libraries.
+     *
+     * @param archive the archive to which the libraries will be added
+     */
     private void addGuiceLibraries(Archive<?> archive) {
 
         File[] springLibraries = resolveGuiceDependencies();
@@ -82,6 +88,11 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
         }
     }
 
+    /**
+     * Resolves Guice dependencies using maven.
+     * 
+     * @return the resolved dependencies
+     */
     private File[] resolveGuiceDependencies() {
 
         return resolveArtifact("com.google.inject:guice", "3.0");

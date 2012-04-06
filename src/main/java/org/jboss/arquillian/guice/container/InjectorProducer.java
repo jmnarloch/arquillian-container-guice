@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
+ * A producer that creates a instance of {@link Injector}.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
@@ -50,6 +51,11 @@ public class InjectorProducer {
     @ApplicationScoped
     private InstanceProducer<Injector> injectorProducer;
 
+    /**
+     * Initializes the {@link Injector}.
+     *
+     * @param beforeClass the before class event
+     */
     public void initInjector(@Observes BeforeClass beforeClass) {
 
         Injector injector = createInjector(beforeClass.getTestClass());
@@ -59,17 +65,33 @@ public class InjectorProducer {
         }
     }
 
+    /**
+     * Creates the {@link Injector} instance.
+     *
+     * @param testClass the test class
+     *
+     * @return instance of {@link Injector}
+     */
     private Injector createInjector(TestClass testClass) {
 
         if (testClass.isAnnotationPresent(GuiceConfiguration.class)) {
             GuiceConfiguration guiceConfiguration = testClass.getAnnotation(GuiceConfiguration.class);
 
+            // creates new instance of guice injector
             return Guice.createInjector(instantiateModules(guiceConfiguration.value()));
         }
 
+        // could not created injector
         return null;
     }
 
+    /**
+     * Instantiates the guice module based of passed classes.
+     *
+     * @param classes classes that implement the {@link Module} interface
+     *
+     * @return array of module instances
+     */
     private Module[] instantiateModules(Class<? extends Module>[] classes) {
         List<Module> modules = new ArrayList<Module>();
 
@@ -81,6 +103,13 @@ public class InjectorProducer {
         return modules.toArray(new Module[modules.size()]);
     }
 
+    /**
+     * Creates new instance of the give class.
+     *
+     * @param clazz the class to instantiate
+     *
+     * @return new instance of specified class
+     */
     private Module instantiateClass(Class<? extends Module> clazz) {
 
         try {

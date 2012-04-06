@@ -26,11 +26,16 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
+ * Guice archive appender, adds all the required classes into the test deployment.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
  */
 public class GuiceEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Archive<?> buildArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-guice.jar")

@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 /**
+ * A Google Guice test enricher, injects guice dependencies into the test class.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
@@ -58,16 +59,28 @@ public class GuiceInjectionEnricher implements TestEnricher {
         return new Object[method.getParameterTypes().length];
     }
 
+    /**
+     * Injects dependencies into test class.
+     *
+     * @param testCase the test class
+     */
     private void injectClass(Object testCase) {
 
+        // retrieves the injector
         Injector injector = getInjector();
 
         if (injector != null) {
 
+            // injects the dependencies into test test class
             injector.injectMembers(testCase);
         }
     }
 
+    /**
+     * Retrieves the {@link Injector} instance
+     *
+     * @return hte {@link Injector} instance
+     */
     private Injector getInjector() {
 
         return injector.get();

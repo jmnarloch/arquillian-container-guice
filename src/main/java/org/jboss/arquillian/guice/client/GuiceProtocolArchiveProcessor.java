@@ -18,6 +18,7 @@ package org.jboss.arquillian.guice.client;
 
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
+import org.jboss.arquillian.guice.GuiceExtensionConsts;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -95,7 +96,7 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
      */
     private File[] resolveGuiceDependencies() {
 
-        return resolveArtifact("com.google.inject:guice", "3.0");
+        return resolveArtifact(GuiceExtensionConsts.GUICE_ARTIFACT_NAME, GuiceExtensionConsts.GUICE_ARTIFACT_VERSION);
     }
 
     /**

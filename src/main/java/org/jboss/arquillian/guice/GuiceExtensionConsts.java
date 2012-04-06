@@ -32,4 +32,19 @@ public final class GuiceExtensionConsts {
     public GuiceExtensionConsts() {
         // empty constructor
     }
+
+    /**
+     * Represents the fully qualified name for {@link com.google.inject.Injector}.
+     */
+    public static final String INJECTOR =  "com.google.inject.Injector";
+
+    /**
+     * Represents the Guice maven artifact name.
+     */
+    public static final String GUICE_ARTIFACT_NAME = "com.google.inject:guice";
+
+    /**
+     * Represents the default Guice maven artifact version.
+     */
+    public static final String GUICE_ARTIFACT_VERSION = "3.0";
 }

@@ -16,27 +16,42 @@
  */
 package org.jboss.arquillian.guice.container;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.guice.GuiceExtensionConsts;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * A remote extension that configures the Guice extension.
+ * Defines a set of operations that are mend to be executed within security context.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
  */
-public class GuiceEnricherRemoteExtension implements RemoteLoadableExtension {
+class SecurityActions {
 
     /**
-     * {@inheritDoc}
+     * <p>Creates new instance of {@link SecurityActions}.</p>
+     *
+     * <p>Private constructor prevents from instantiation outside this class.</p>
      */
-    public void register(ExtensionBuilder builder) {
+    private SecurityActions() {
+        // empty constructor
+    }
 
-        if (Validate.classExists(GuiceExtensionConsts.INJECTOR)) {
-
-            builder.service(TestEnricher.class, GuiceInjectionEnricher.class)
-                    .observer(InjectorProducer.class);
+    static boolean isClassPresent(String name) {
+        try {
+            ClassLoader classLoader = getThreadContextClassLoader();
+            classLoader.loadClass(name);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
+    }
+
+    static ClassLoader getThreadContextClassLoader() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+            public ClassLoader run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
 }

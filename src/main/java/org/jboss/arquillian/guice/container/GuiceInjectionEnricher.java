@@ -19,6 +19,7 @@ package org.jboss.arquillian.guice.container;
 import com.google.inject.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.guice.GuiceExtensionConsts;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import java.lang.reflect.Method;
@@ -48,7 +49,10 @@ public class GuiceInjectionEnricher implements TestEnricher {
      */
     public void enrich(Object testCase) {
 
-        injectClass(testCase);
+        // TODO check if class contains proper guice or jsr-330 annotations
+        if(SecurityActions.isClassPresent(GuiceExtensionConsts.INJECTOR)) {
+            injectClass(testCase);
+        }
     }
 
     /**

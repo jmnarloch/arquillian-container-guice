@@ -19,15 +19,19 @@ package org.jboss.arquillian.guice.container;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.persist.PersistService;
+import com.google.inject.persist.jpa.JpaPersistModule;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.guice.annotations.GuiceConfiguration;
+import org.jboss.arquillian.guice.annotations.GuiceJpaPersistConfiguration;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -74,15 +78,64 @@ public class InjectorProducer {
      */
     private Injector createInjector(TestClass testClass) {
 
-        if (testClass.isAnnotationPresent(GuiceConfiguration.class)) {
-            GuiceConfiguration guiceConfiguration = testClass.getAnnotation(GuiceConfiguration.class);
+        if (isGuiceTest(testClass)) {
 
             // creates new instance of guice injector
-            return Guice.createInjector(instantiateModules(guiceConfiguration.value()));
+            Injector injector = Guice.createInjector(getTestClassModules(testClass));
+            configureInjector(injector, testClass);
+            return injector;
         }
 
         // could not created injector
         return null;
+    }
+
+    /**
+     * Returns whether the test defines guice configuration.
+     *
+     * @param testClass the test class
+     *
+     * @return true if test defines guice module, false otherwise
+     */
+    private boolean isGuiceTest(TestClass testClass) {
+
+        return testClass.isAnnotationPresent(GuiceConfiguration.class);
+    }
+
+    /**
+     * Returns whether the persistence unit has been defined for test.
+     *
+     * @param testClass the test class
+     *
+     * @return true if the persistence unit has been defined, false otherwise
+     */
+    private boolean isPersistenceUnitDefined(TestClass testClass) {
+
+        return testClass.isAnnotationPresent(GuiceJpaPersistConfiguration.class);
+    }
+
+    /**
+     * Retrieves Guice modules for the give test class.
+     *
+     * @param testClass the test class
+     *
+     * @return modules instances
+     */
+    private Module[] getTestClassModules(TestClass testClass) {
+
+        GuiceConfiguration guiceConfiguration;
+        GuiceJpaPersistConfiguration guiceJpaPersistConfiguration;
+        List<Module> modules = new ArrayList<Module>();
+
+        guiceConfiguration = testClass.getAnnotation(GuiceConfiguration.class);
+        Collections.addAll(modules, instantiateModules(guiceConfiguration.value()));
+
+        if (isPersistenceUnitDefined(testClass)) {
+            guiceJpaPersistConfiguration = testClass.getAnnotation(GuiceJpaPersistConfiguration.class);
+            modules.add(new JpaPersistModule(guiceJpaPersistConfiguration.value()));
+        }
+
+        return modules.toArray(new Module[modules.size()]);
     }
 
     /**
@@ -118,6 +171,24 @@ public class InjectorProducer {
             throw new RuntimeException("Could not instantiate Guice module.", e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate Guice module.", e);
+        }
+    }
+
+    /**
+     * Configures {@link Injector} instance.
+     *
+     * @param injector {@link Injector} instance
+     * @param testClass the test class
+     */
+    private void configureInjector(Injector injector, TestClass testClass) {
+
+        if (isPersistenceUnitDefined(testClass)) {
+            GuiceJpaPersistConfiguration guiceJpaPersistConfiguration =
+                    testClass.getAnnotation(GuiceJpaPersistConfiguration.class);
+
+            if(guiceJpaPersistConfiguration.init()) {
+                injector.getInstance(PersistService.class).start();
+            }
         }
     }
 }

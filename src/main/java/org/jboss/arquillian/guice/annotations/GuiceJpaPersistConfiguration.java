@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.guice.annotations;
 
-import com.google.inject.Module;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -27,7 +25,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation used for configuring Guice within test.
+ * Annotation used for configuring Guice {@link com.google.inject.persist.jpa.JpaPersistModule} within test.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @version $Revision: $
@@ -36,12 +34,18 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 @Inherited
-public @interface GuiceConfiguration {
+public @interface GuiceJpaPersistConfiguration {
 
     /**
-     * <p>Guice module classes.</p>
-     *
-     * @return guice module classes
+     * Name of the JPA persistence unit.
      */
-    Class<? extends Module>[] value();
+    String value();
+
+    /**
+     * Whether the {@link com.google.inject.persist.PersistService}, for the given test,
+     * should be automatically started.
+     * <p/>
+     * Default to {@code false}
+     */
+    boolean init() default false;
 }

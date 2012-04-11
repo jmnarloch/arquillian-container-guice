@@ -137,6 +137,12 @@
                 <version>${version.google_guice}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-persist</artifactId>
+                <version>${version.google_guice}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -180,7 +186,11 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>${version.google_guice}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-persist</artifactId>
         </dependency>
 
     </dependencies>

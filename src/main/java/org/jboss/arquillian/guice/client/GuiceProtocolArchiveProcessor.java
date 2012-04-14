@@ -77,15 +77,12 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
      */
     private void addGuiceLibraries(Archive<?> archive) {
 
-        File[] springLibraries = resolveGuiceDependencies();
+        File[] guiceLibraries = resolveGuiceDependencies();
 
         if (archive instanceof EnterpriseArchive) {
-            ((EnterpriseArchive) archive).addAsModules(springLibraries);
+            ((EnterpriseArchive) archive).addAsModules(guiceLibraries);
         } else if (archive instanceof WebArchive) {
-            ((WebArchive) archive).addAsLibraries(springLibraries);
-        } else {
-            throw new RuntimeException("Unsupported archive format[" + archive.getClass().getSimpleName()
-                    + ", " + archive.getName() + "] for Spring application. Please use WAR or EAR.");
+            ((WebArchive) archive).addAsLibraries(guiceLibraries);
         }
     }
 
@@ -128,7 +125,7 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
         MavenDependencyResolver mvnResolver = DependencyResolvers.use(MavenDependencyResolver.class);
 
         if (isMavenUsed()) {
-            mvnResolver.loadMetadataFromPom("pom.xml");
+            mvnResolver.loadMetadataFromPom(GuiceExtensionConsts.POM_XML);
         }
 
         return mvnResolver.artifacts(artifact)
@@ -141,6 +138,6 @@ public class GuiceProtocolArchiveProcessor implements ProtocolArchiveProcessor {
      * @return true if maven is being used in project, false otherwise
      */
     private boolean isMavenUsed() {
-        return new File("pom.xml").exists();
+        return new File(GuiceExtensionConsts.POM_XML).exists();
     }
 }

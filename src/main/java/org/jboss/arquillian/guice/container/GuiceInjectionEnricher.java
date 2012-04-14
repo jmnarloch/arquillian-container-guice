@@ -20,6 +20,7 @@ import com.google.inject.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.guice.GuiceExtensionConsts;
+import org.jboss.arquillian.guice.annotations.GuiceConfiguration;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import java.lang.reflect.Method;
@@ -49,10 +50,20 @@ public class GuiceInjectionEnricher implements TestEnricher {
      */
     public void enrich(Object testCase) {
 
-        // TODO check if class contains proper guice or jsr-330 annotations
-        if(SecurityActions.isClassPresent(GuiceExtensionConsts.INJECTOR)) {
+        if(SecurityActions.isClassPresent(GuiceExtensionConsts.INJECTOR)
+                && isGuiceTest(testCase)) {
             injectClass(testCase);
         }
+    }
+
+    /**
+     * Returns whether the test case is annotated with {@link GuiceConfiguration} and requires guice injection.
+     *
+     * @param testCase the test case
+     * @return true if the test is annotated with {@link GuiceConfiguration}, false otherwise
+     */
+    private boolean isGuiceTest(Object testCase) {
+        return testCase.getClass().isAnnotationPresent(GuiceConfiguration.class);
     }
 
     /**
@@ -77,6 +88,7 @@ public class GuiceInjectionEnricher implements TestEnricher {
 
             // injects the dependencies into test test class
             injector.injectMembers(testCase);
+            log.fine("Injecting dependencies into guice test " + testCase.getClass().getSimpleName());
         }
     }
 

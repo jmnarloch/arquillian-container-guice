@@ -47,4 +47,9 @@ public final class GuiceExtensionConsts {
      * Represents the default Guice maven artifact version.
      */
     public static final String GUICE_ARTIFACT_VERSION = "3.0";
+
+    /**
+     * Represents the name of the maven pom file.
+     */
+    public static final String POM_XML = "pom.xml";
 }

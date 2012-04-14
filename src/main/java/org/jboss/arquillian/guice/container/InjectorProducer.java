@@ -62,10 +62,16 @@ public class InjectorProducer {
      */
     public void initInjector(@Observes BeforeClass beforeClass) {
 
-        Injector injector = createInjector(beforeClass.getTestClass());
+        if (isGuiceTest(beforeClass.getTestClass())) {
+            Injector injector = createInjector(beforeClass.getTestClass());
 
-        if (injector != null) {
-            injectorProducer.set(injector);
+            if (injector != null) {
+
+                injectorProducer.set(injector);
+
+                log.fine("Successfully created guice injector for test class: "
+                        + beforeClass.getTestClass().getName());
+            }
         }
     }
 
@@ -78,16 +84,10 @@ public class InjectorProducer {
      */
     private Injector createInjector(TestClass testClass) {
 
-        if (isGuiceTest(testClass)) {
-
-            // creates new instance of guice injector
-            Injector injector = Guice.createInjector(getTestClassModules(testClass));
-            configureInjector(injector, testClass);
-            return injector;
-        }
-
-        // could not created injector
-        return null;
+        // creates new instance of guice injector
+        Injector injector = Guice.createInjector(getTestClassModules(testClass));
+        configureInjector(injector, testClass);
+        return injector;
     }
 
     /**
@@ -177,7 +177,7 @@ public class InjectorProducer {
     /**
      * Configures {@link Injector} instance.
      *
-     * @param injector {@link Injector} instance
+     * @param injector  {@link Injector} instance
      * @param testClass the test class
      */
     private void configureInjector(Injector injector, TestClass testClass) {
@@ -186,8 +186,10 @@ public class InjectorProducer {
             GuiceJpaPersistConfiguration guiceJpaPersistConfiguration =
                     testClass.getAnnotation(GuiceJpaPersistConfiguration.class);
 
-            if(guiceJpaPersistConfiguration.init()) {
+            if (guiceJpaPersistConfiguration.init()) {
                 injector.getInstance(PersistService.class).start();
+
+                log.fine("Starting guice persist service.");
             }
         }
     }
